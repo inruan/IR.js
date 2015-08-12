@@ -57,4 +57,28 @@ Date.prototype.format = function(format){
 	B.back = function(){
 		history.go(-1);
 	};
+
+	B.getValueByKey = function(s, k){
+		var reg = new RegExp("(\\?|^|&)" + k + "=([^&]*)(&|$)"); 
+		var r = window.location.search.match(reg); 
+		if (r != null) return decodeURIComponent(r[2]); return null; 
+	}
+
+	B.getQueryString = function(name){
+		return B.getValueByKey(window.location.search, name);
+	}
+
 }(IR, jQuery);
+
+
+
+
+
+
+
+
+
+
+
+
+
