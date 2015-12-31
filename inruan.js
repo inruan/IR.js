@@ -6,6 +6,23 @@
 IR = {
 
 };
+
+// ex jQuery
+
+jQuery.fn.toggleAttr = function(attr, v){
+	if(v==undefined){
+		v = attr;
+	}
+	thiz = this;
+	if(thiz.attr(attr) == v){
+		thiz.removeAttr(attr)
+	}
+	else{
+		thiz.attr(attr,v);
+	}
+}
+
+
 Date.prototype.format = function(format) {
 	var o = {
 		"M+": this.getMonth() + 1, //month 
@@ -69,10 +86,11 @@ Date.prototype.format = function(format) {
 	}
 
 	B.buildParam = function(raw, par, par_value) {
-		var r = new RegExp(par + '=[^&]*');
+		var r = new RegExp('([&\?])'+par + '=[^&]*');
 		var replaceText = par + '=' + par_value;
-		if (raw.match(r)) {
-			return raw.replace(r, replaceText);
+		var rs = raw.match(r);
+		if (rs) {
+			return raw.replace(r, rs[1] + replaceText);
 		} else {
 			if (raw.match('[\?]')) {
 				return raw + '&' + replaceText;
@@ -105,5 +123,32 @@ Date.prototype.format = function(format) {
 		});
 		return data;
 	};
+
+	B.verifyInputValues = function(inps){
+		for (var i = 0; i < inps.length; i++) {
+			var thiz = $(inps[i]);
+			var val = thiz.val();
+			if(thiz.attr('nullmsg') && !val){
+				B.msg(thiz.attr('nullmsg'),function(){
+					thiz.focus();
+				});
+				return false;
+			}
+		};
+		return true;
+	};
+
+	B.timestamp = function(){
+		return (new Date()).getTime();
+	}
+
+	B.smallImage = function(url){
+		if(url && url.length>0){
+			return B.buildParam(url, 'type', 'small');
+		}
+		else{
+			return url;
+		}
+	}
 
 }(IR, jQuery);
