@@ -44,7 +44,35 @@ Date.prototype.format = function(format) {
 		}
 	}
 	return format;
-}; + function(B, $) {
+};
+
+if(!Array.prototype.indexOfEx){
+	Array.prototype.indexOfEx = function(obj, equ){
+		var fn = typeof(equ) == "function" ? equ: function (v1,v2){
+			return equ?v1[equ] == v2[equ]: v1.id == v2.id;
+		};
+		for (var i = 0; i < this.length; i++) {
+			if(this[i]==obj || (typeof(this[i]) == "object" && typeof(obj) == "object" && fn(this[i], obj))) {
+				return i;
+			}
+		};
+		return -1;
+	}
+}
+
+if(!Array.prototype.removeAt){
+	Array.prototype.removeAt = function(index){
+		return this.splice(index,1);
+	}
+}
+
+if(!String.prototype.startsWith){
+	String.prototype.startsWith = function(s){
+		return this.indexOf(s)==0;
+	};
+}
+
++ function(B, $) {
 	B.log = function(log) {
 		console.log(log);
 	};
@@ -75,8 +103,8 @@ Date.prototype.format = function(format) {
 	};
 
 	B.getValueByKey = function(s, k) {
-		var reg = new RegExp("(\\?|^|&)" + k + "=([^&]*)(&|$)");
-		var r = window.location.search.match(reg);
+		var reg = new RegExp("([\\?#]|^|&)" + k + "=([^&]*)(&|$)");
+		var r = s.match(reg);
 		if (r != null) return decodeURIComponent(r[2]);
 		return null;
 	}
@@ -140,7 +168,7 @@ Date.prototype.format = function(format) {
 
 	B.timestamp = function(){
 		return (new Date()).getTime();
-	}
+	};
 
 	B.smallImage = function(url){
 		if(url && url.length>0){
@@ -149,6 +177,23 @@ Date.prototype.format = function(format) {
 		else{
 			return url;
 		}
-	}
+	};
+
+	B.getSearchKeyValues = function(search){
+		if(!search)
+			search = window.location.search;
+		var rt = /([^\?^\=^\&]+)=([^\?^\=^\&]+)/g;
+		var rl = /([^\?^\=^\&]+)=([^\?^\=^\&]+)/;
+		var res = {};
+
+		var rs = search.match(rt);
+		for (var i = 0; rs && i < rs.length; i++) {
+			var ss = rs[i].match(rl);
+			if(ss.length==3){
+				res[ss[1]] = decodeURIComponent(ss[2]);
+			}
+		};
+		return res;
+	};
 
 }(IR, jQuery);
